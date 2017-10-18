@@ -7,7 +7,6 @@ class TimerWidget extends StatefulWidget {
 }
 
 class TimerWidgetState extends State<TimerWidget> with SingleTickerProviderStateMixin {
-  Animation<double> _animation;
   AnimationController _controller;
   Stopwatch _stopWatch;
 
@@ -18,20 +17,19 @@ class TimerWidgetState extends State<TimerWidget> with SingleTickerProviderState
   @override
   void initState() {
     super.initState();
-    setState(() {
       _controller = new AnimationController(
-          duration: const Duration(milliseconds: 1500), vsync: this);
-      _animation = new Tween(begin: 0.0, end: 300.0).animate(_controller)
-        ..addListener(() {
-          print('listener invoked');
-          setState(() {
-            // ...
-          });
-        });
-      _controller.forward();
+          duration: const Duration(milliseconds: 20), vsync: this)
+        ..addStatusListener((AnimationStatus status) {
+          if (status == AnimationStatus.completed)
+          {
+            _controller.value = 0.0;
+            _controller.forward();
+          }
+          setState(() {});
+        })
+        ..forward();
 
       _stopWatch = new Stopwatch();
-    });
   }
 
   @override
@@ -57,15 +55,20 @@ class TimerWidgetState extends State<TimerWidget> with SingleTickerProviderState
   }
 
   void _actionButtonPressed() {
-    print('is controller null: ${_controller}');
-    setState(() {
-      print('is controller null: ${_animation}');
-      if (_stopWatch.isRunning) {
-        _stopTimer();
-      } else {
-        _startTimer();
-      }
-    });
+    if (_stopWatch.isRunning) {
+      _stopWatch.stop();
+
+      _actionIcon = Icons.play_arrow;
+      _actionColor = Colors.blue;
+      _toolTip = 'Start timer';
+    } else {
+      _stopWatch.start();
+
+      _actionIcon = Icons.stop;
+      _actionColor = Colors.red;
+      _toolTip = 'Stop timer';
+    }
+    setState(() {});
   }
 
   @override
@@ -77,7 +80,7 @@ class TimerWidgetState extends State<TimerWidget> with SingleTickerProviderState
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   new Text(
-                      '${(_stopWatch.elapsedMilliseconds / 1000).toString()}s - Animation: ${_animation == null}',
+                      '${(_stopWatch.elapsedMilliseconds / 1000).toString()}s',
                       style: Theme.of(context).textTheme.display2
                   ),
                   new IconButton(
