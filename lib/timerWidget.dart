@@ -38,22 +38,6 @@ class TimerWidgetState extends State<TimerWidget> with SingleTickerProviderState
     super.dispose();
   }
 
-  void _startTimer() {
-    _stopWatch.start();
-
-    _actionIcon = Icons.stop;
-    _actionColor = Colors.red;
-    _toolTip = 'Stop timer';
-  }
-
-  void _stopTimer() {
-    _stopWatch.stop();
-
-    _actionIcon = Icons.play_arrow;
-    _actionColor = Colors.blue;
-    _toolTip = 'Start timer';
-  }
-
   void _actionButtonPressed() {
     if (_stopWatch.isRunning) {
       _stopWatch.stop();
