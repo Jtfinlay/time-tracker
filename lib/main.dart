@@ -8,42 +8,48 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
-      title: 'Crap tracks',
-      theme: new ThemeData(
-        primarySwatch: Colors.green,
-      ),
-      home: new MyHomePage(title: 'Crap Tracks'),
+      title: 'Stool Tracker',
+      home: new HomeScreen(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
-  final String title;
-
+class HomeScreen extends StatefulWidget {
   @override
-  _MyHomePageState createState() => new _MyHomePageState();
+  State createState() => new HomeScreenState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class HomeScreenState extends State<HomeScreen> {
+
+  Widget _timerWidget() {
+    return new Center(
+        child: new Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            new Text(
+                '0:00',
+                style: Theme.of(context).textTheme.display2
+            ),
+            new IconButton(
+              icon: new Icon(Icons.play_arrow),
+              iconSize: 48.0,
+              color: Colors.blue,
+              tooltip: 'Start timer',
+              onPressed: () { print('onPressed'); },
+            ),
+          ],
+        )
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-      appBar: new AppBar(
-        title: new Text(widget.title),
-      ),
-      body: new Center(
-        child: new Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            new Text(
-              'Hello world',
-              style: Theme.of(context).textTheme.display1,
-            ),
-          ],
-        ),
-      ),
+        appBar: new AppBar(title: new Text('Stool Tracker')),
+        body: _timerWidget()
     );
   }
+
+
 }
+
