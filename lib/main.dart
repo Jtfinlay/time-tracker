@@ -16,8 +16,6 @@ class MyApp extends StatelessWidget {
   }
 }
 
-
-
 class HomeScreen extends StatefulWidget {
   @override
   State createState() => new HomeScreenState();

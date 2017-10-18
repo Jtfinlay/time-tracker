@@ -6,22 +6,36 @@ class TimerWidget extends StatefulWidget {
 }
 
 class TimerWidgetState extends State<TimerWidget> {
+  final _stopWatch = new Stopwatch();
   var _actionIcon = Icons.play_arrow;
   var _actionColor = Colors.blue;
   var _toolTip = 'Start timer';
-  var _isTimerRunning = false;
+
+  void _startTimer() {
+    print('start timer: ${_stopWatch.elapsedMilliseconds}');
+    _stopWatch.start();
+
+    _actionIcon = Icons.stop;
+    _actionColor = Colors.red;
+    _toolTip = 'Stop timer';
+  }
+
+  void _stopTimer() {
+    print('stop timer: ${_stopWatch.elapsedMilliseconds}');
+    _stopWatch.stop();
+
+    _actionIcon = Icons.play_arrow;
+    _actionColor = Colors.blue;
+    _toolTip = 'Start timer';
+  }
 
   void _actionButtonPressed() {
     setState(() {
-      _isTimerRunning = !_isTimerRunning;
-      if (_isTimerRunning) {
-        _actionIcon = Icons.stop;
-        _actionColor = Colors.red;
-        _toolTip = 'Stop timer';
+      print('action button. Running: ${_stopWatch.isRunning}');
+      if (_stopWatch.isRunning) {
+        _stopTimer();
       } else {
-        _actionIcon = Icons.play_arrow;
-        _actionColor = Colors.blue;
-        _toolTip = 'Start timer';
+        _startTimer();
       }
     });
   }
