@@ -1,5 +1,5 @@
 name: timetracker_mobile
-description: A new Flutter project.
+description: Track your movements and how much you're paid to sit there!
 
 dependencies:
   flutter:
