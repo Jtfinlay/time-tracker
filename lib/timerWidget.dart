@@ -2,37 +2,23 @@ import 'package:flutter/animation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import 'dart:async';
+
 class TimerWidget extends StatefulWidget {
   @override
   State createState() => new TimerWidgetState();
 }
 
-class TimerWidgetState extends State<TimerWidget>
-    with SingleTickerProviderStateMixin {
-  AnimationController _controller;
+class TimerWidgetState extends State<TimerWidget> {
+  Timer _redrawTimer;
   Stopwatch _stopWatch;
 
   @override
   void initState() {
-    super.initState();
-    _controller = new AnimationController(
-        duration: const Duration(milliseconds: 15), vsync: this)
-      ..addStatusListener((AnimationStatus status) {
-        if (status == AnimationStatus.completed) {
-          _controller.value = 0.0;
-          _controller.forward();
-        }
-        setState(() {});
-      })
-      ..forward();
-
+    _redrawTimer = new Timer.periodic(
+        new Duration(milliseconds: 15),
+        (Timer t) => setState(() {}));
     _stopWatch = new Stopwatch();
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
   }
 
   Icon get _primaryButtonIcon => _isRunning
