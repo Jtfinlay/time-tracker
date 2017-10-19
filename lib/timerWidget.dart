@@ -32,8 +32,6 @@ class TimerWidgetState extends State<TimerWidget> {
 
   bool get _isRunning => _stopWatch.isRunning;
 
-  bool get _isResetButtonVisible => _stopWatch.elapsedMilliseconds > 0;
-
   void stop() {
     _stopWatch.stop();
     setState(() {});
@@ -97,42 +95,26 @@ class TimerWidgetState extends State<TimerWidget> {
   @override
   Widget build(BuildContext context) {
     return new Center(
-        child: new Stack(
-            children: <Widget>[
-              new Align(
-                child: new Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    new Text(
-                        prettifyElapsedTime(),
-                        style: Theme
-                            .of(context)
-                            .textTheme
-                            .display2
-                    ),
-                    new IconButton(
-                        icon: _primaryButtonIcon,
-                        iconSize: 48.0,
-                        color: _primaryButtonColor,
-                        tooltip: _primaryButtonTooltip,
-                        onPressed: () => _isRunning ? stop() : start(),
-                        ),
-                  ]
-                )
-              ),
-              new Align(
-                alignment: Alignment.bottomCenter,
-                child: _isResetButtonVisible ? new IconButton(
-                    icon: new Icon(Icons.replay),
-                    iconSize: 48.0,
-                    color: Colors.blue,
-                    tooltip: 'Reset timer',
-                    onPressed: reset,
-                    ) : new Container(),
-              ),
-            ],
+      child: new Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          new Text(
+              prettifyElapsedTime(),
+              style: Theme
+                  .of(context)
+                  .textTheme
+                  .display2
           ),
-        );
+          new IconButton(
+              icon: _primaryButtonIcon,
+              iconSize: 48.0,
+              color: _primaryButtonColor,
+              tooltip: _primaryButtonTooltip,
+              onPressed: () => _isRunning ? stop() : start(),
+          ),
+        ]
+      )
+    );
   }
 }
