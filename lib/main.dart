@@ -4,12 +4,14 @@ import 'timerWidget.dart';
 
 class NavigationIconView {
   NavigationIconView({
-    Widget icon,
-    Widget title,
+    Icon icon,
+    Text title,
     Color color,
+    Widget page,
     TickerProvider sync,
   }) : _icon = icon,
        _color = color,
+       _page = page,
         item = new BottomNavigationBarItem(
           icon: icon,
           title: title,
@@ -25,7 +27,8 @@ class NavigationIconView {
     );
   }
 
-  Widget _icon;
+  Widget _page;
+  Icon _icon;
   Color _color;
   BottomNavigationBarItem item;
   AnimationController controller;
@@ -97,7 +100,8 @@ class HomeScreenState extends State<HomeScreen>
       new NavigationIconView(
           icon: new Icon(Icons.access_alarm),
           title: new Text('Timer'),
-          color: Colors.deepPurple[500],
+          color: Colors.brown[500],
+          page: new TimerWidget(),
           sync: this,
           ),
       new NavigationIconView(
@@ -107,8 +111,8 @@ class HomeScreenState extends State<HomeScreen>
           sync: this,
           ),
       new NavigationIconView(
-          icon: new Icon(Icons.cloud),
-          title: new Text('Cloud'),
+          icon: new Icon(Icons.settings),
+          title: new Text('Settings'),
           color: Colors.teal[500],
           sync: this,
           ),
