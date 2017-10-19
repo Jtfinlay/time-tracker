@@ -1,5 +1,6 @@
 import 'package:flutter/animation.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class TimerWidget extends StatefulWidget {
   @override
@@ -47,20 +48,64 @@ class TimerWidgetState extends State<TimerWidget>
 
   bool get _isResetButtonVisible => _stopWatch.elapsedMilliseconds > 0;
 
-  void _stop() {
+  void stop() {
     _stopWatch.stop();
     setState(() {});
   }
 
-  void _start() {
+  void start() {
     _stopWatch.start();
     setState(() {});
   }
 
-  void _reset() {
+  void reset() {
     _stopWatch.stop();
     _stopWatch.reset();
     setState(() {});
+  }
+
+  String prettifyElapsedTime() {
+    String result = '';
+    var duration = new Duration(milliseconds: _stopWatch.elapsedMilliseconds);
+
+    var days = duration.inDays;
+    duration -= new Duration(days: days);
+
+    var hours = duration.inHours;
+    duration -= new Duration(hours: hours);
+
+    var minutes = duration.inMinutes;
+    duration -= new Duration(minutes: minutes);
+
+    var seconds = duration.inSeconds;
+    duration -= new Duration(seconds: seconds);
+
+    var ms = duration.inMilliseconds;
+
+    if (days > 0)
+    {
+      result += '${days}d ${hours}h ';
+    } else if (hours > 0) {
+      result += '${hours}h ';
+    }
+
+    String formatMinutes = '';
+    if (minutes == 0)       formatMinutes = '00';
+    else if (minutes < 10)  formatMinutes = '0$minutes';
+    else                    formatMinutes = '$minutes';
+
+    String formatSeconds = '';
+    if (seconds == 0)       formatSeconds = '00';
+    else if (seconds < 10)  formatSeconds = '0$seconds';
+    else                    formatSeconds = '$seconds';
+
+    String formatMs = '';
+    if (ms < 10)            formatMs = '00';
+    else if (ms < 100)      formatMs = '0$ms'.substring(0,2);
+    else                    formatMs = '$ms'.substring(0,2);
+
+    result += '${formatMinutes}:${formatSeconds}.${formatMs}';
+    return result;
   }
 
   @override
@@ -74,8 +119,7 @@ class TimerWidgetState extends State<TimerWidget>
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
                     new Text(
-                        '${(_stopWatch.elapsedMilliseconds / 1000)
-                            .toString()}s',
+                        prettifyElapsedTime(),
                         style: Theme
                             .of(context)
                             .textTheme
@@ -86,7 +130,7 @@ class TimerWidgetState extends State<TimerWidget>
                         iconSize: 48.0,
                         color: _primaryButtonColor,
                         tooltip: _primaryButtonTooltip,
-                        onPressed: () => _isRunning ? _stop() : _start(),
+                        onPressed: () => _isRunning ? stop() : start(),
                         ),
                   ]
                 )
@@ -98,7 +142,7 @@ class TimerWidgetState extends State<TimerWidget>
                     iconSize: 48.0,
                     color: Colors.blue,
                     tooltip: 'Reset timer',
-                    onPressed: _reset,
+                    onPressed: reset,
                     ) : new Container(),
               ),
             ],
