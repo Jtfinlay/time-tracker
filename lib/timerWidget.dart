@@ -11,10 +11,6 @@ class TimerWidgetState extends State<TimerWidget>
   AnimationController _controller;
   Stopwatch _stopWatch;
 
-  var _actionIcon = Icons.play_circle_filled;
-  var _actionColor = Colors.blue;
-  var _toolTip = 'Start timer';
-
   @override
   void initState() {
     super.initState();
@@ -38,32 +34,31 @@ class TimerWidgetState extends State<TimerWidget>
     super.dispose();
   }
 
-  bool _isRunning() => _stopWatch.isRunning;
+  Icon get _primaryButtonIcon => _isRunning
+      ? new Icon(Icons.pause_circle_filled) : new Icon(Icons.play_circle_filled);
 
-  bool _isResetButtonVisible() => _stopWatch.elapsedMilliseconds > 0;
+  MaterialColor get _primaryButtonColor => _isRunning
+      ? Colors.orange : Colors.blue;
+
+  String get _primaryButtonTooltip => _isRunning
+      ? 'Pause timer' : 'Start timer';
+
+  bool get _isRunning => _stopWatch.isRunning;
+
+  bool get _isResetButtonVisible => _stopWatch.elapsedMilliseconds > 0;
 
   void _stop() {
     _stopWatch.stop();
-
-    _actionIcon = Icons.play_circle_filled;
-    _actionColor = Colors.blue;
-    _toolTip = 'Start timer';
-
     setState(() {});
   }
 
   void _start() {
     _stopWatch.start();
-
-    _actionIcon = Icons.stop;
-    _actionColor = Colors.red;
-    _toolTip = 'Stop timer';
-
     setState(() {});
   }
 
   void _reset() {
-    _stop();
+    _stopWatch.stop();
     _stopWatch.reset();
     setState(() {});
   }
@@ -87,18 +82,18 @@ class TimerWidgetState extends State<TimerWidget>
                             .display2
                     ),
                     new IconButton(
-                        icon: new Icon(_actionIcon),
+                        icon: _primaryButtonIcon,
                         iconSize: 48.0,
-                        color: _actionColor,
-                        tooltip: _toolTip,
-                        onPressed: () => _isRunning() ? _stop() : _start(),
+                        color: _primaryButtonColor,
+                        tooltip: _primaryButtonTooltip,
+                        onPressed: () => _isRunning ? _stop() : _start(),
                         ),
                   ]
                 )
               ),
               new Align(
                 alignment: Alignment.bottomCenter,
-                child: _isResetButtonVisible() ? new IconButton(
+                child: _isResetButtonVisible ? new IconButton(
                     icon: new Icon(Icons.replay),
                     iconSize: 48.0,
                     color: Colors.blue,
@@ -109,39 +104,5 @@ class TimerWidgetState extends State<TimerWidget>
             ],
           ),
         );
-
-
-//      child: new Column(
-//        mainAxisAlignment: MainAxisAlignment.center,
-//        crossAxisAlignment: CrossAxisAlignment.center,
-//        children: <Widget>[
-//          new Text(
-//              '${(_stopWatch.elapsedMilliseconds / 1000).toString()}s',
-//              style: Theme.of(context).textTheme.display2
-//          ),
-//          new IconButton(
-//              icon: new Icon(_actionIcon),
-//              iconSize: 48.0,
-//              color: _actionColor,
-//              tooltip: _toolTip,
-//              onPressed: () => _isRunning() ? _stop() : _start(),
-//              ),
-//          new Row(
-//            mainAxisAlignment: MainAxisAlignment.center,
-//            children: <Widget>[
-//              new FloatingActionButton(
-//                onPressed: _reset,
-//                tooltip: 'Reset timer',
-//                child: new Icon(Icons.replay),
-//              ),
-//            ],
-//          ),
-//          _isResetButtonVisible() ? new IconButton(
-//              icon: new Icon(Icons.replay),
-//              iconSize: 48.0,
-//              color: Colors.blue,
-//              tooltip: 'Reset timer',
-//              onPressed: _reset,
-//              ) : new Container(),
   }
 }
