@@ -14,10 +14,18 @@ class TimerWidgetState extends State<TimerWidget> {
 
   @override
   void initState() {
+    super.initState();
     _redrawTimer = new Timer.periodic(
         new Duration(milliseconds: 15),
         (Timer t) => setState(() {}));
     _stopWatch = new Stopwatch();
+  }
+
+  @override
+  void dispose() {
+    _stopWatch.stop();
+    _redrawTimer.cancel();
+    super.dispose();
   }
 
   Icon get _primaryButtonIcon => _isRunning

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'settings.dart';
 import 'timerWidget.dart';
 
 class NavigationIconView {
@@ -94,7 +95,7 @@ class HomeScreenState extends State<HomeScreen>
           icon: new Icon(Icons.settings),
           title: new Text('Settings'),
           color: Colors.teal[500],
-          page: new Container(),
+          page: new SettingsPage(),
           sync: this,
           ),
     ];
