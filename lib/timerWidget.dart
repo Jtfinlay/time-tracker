@@ -24,7 +24,7 @@ class TimerWidgetState extends State<TimerWidget> {
       ? new Icon(Icons.pause_circle_filled) : new Icon(Icons.play_circle_filled);
 
   MaterialColor get _primaryButtonColor => _isRunning
-      ? Colors.orange : Colors.blue;
+      ? Colors.orange : Colors.teal;
 
   String get _primaryButtonTooltip => _isRunning
       ? 'Pause timer' : 'Start timer';

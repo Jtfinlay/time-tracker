@@ -42,29 +42,8 @@ class NavigationIconView {
             begin: const Offset(0.0, 0.2), // Small offset from the top
             end: const Offset(0.0, 0.0),
         ).animate(_animation),
-        child: new IconTheme(
-          data: new IconThemeData(
-            color: _color,
-            size: 120.0,
-          ),
-          child: _icon,
-        ),
+        child: _page
       ),
-    );
-  }
-}
-
-class CustomIcon extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final IconThemeData iconTheme = IconTheme.of(context);
-    return new Container(
-        margin: const EdgeInsets.all(4.0),
-        width: iconTheme.size - 8.0,
-        height: iconTheme.size - 8.0,
-        decoration: new BoxDecoration(
-            color: iconTheme.color,
-        )
     );
   }
 }
@@ -108,12 +87,14 @@ class HomeScreenState extends State<HomeScreen>
           icon: new Icon(Icons.insert_chart),
           title: new Text('History'),
           color: Colors.deepOrange[500],
+          page: new Container(),
           sync: this,
           ),
       new NavigationIconView(
           icon: new Icon(Icons.settings),
           title: new Text('Settings'),
           color: Colors.teal[500],
+          page: new Container(),
           sync: this,
           ),
     ];
@@ -174,7 +155,10 @@ class HomeScreenState extends State<HomeScreen>
     );
 
     return new Scaffold(
-        appBar: new AppBar(title: new Text('Stool Tracker')),
+        appBar: new AppBar(
+            title: new Text('Stool Tracker'),
+            backgroundColor: Colors.lightBlue,
+        ),
         body:  new Center(
             child: _buildTransitionsStack()
         ),
