@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 class SalaryEditWidget extends StatefulWidget {
@@ -11,6 +13,58 @@ enum DismissDialogAction {
   save,
 }
 
+class _TimePicker extends StatelessWidget {
+  const _TimePicker({
+    Key key,
+    this.labelText,
+    this.selectedTime,
+    this.selectTime
+}) : super(key: key);
+
+  final String labelText;
+  final TimeOfDay selectedTime;
+  final ValueChanged<TimeOfDay> selectTime;
+
+  Future<Null> _selectTime(BuildContext context) async {
+    final TimeOfDay picked = await showTimePicker(
+      context: context,
+      initialTime: selectedTime
+    );
+    if (picked != null && picked != selectedTime) {
+      selectTime(picked);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return new Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: <Widget>[
+        new Text(
+          labelText,
+          style: Theme.of(context).textTheme.subhead
+        ),
+        new Expanded(
+          child: new Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: <Widget>[
+              new FlatButton(
+                child: new Text(
+                  selectedTime.format(context),
+                  style: Theme.of(context).textTheme.button.copyWith(
+                    fontSize: 20.0
+                  )
+                ),
+                onPressed: () { },
+              )
+            ],
+          )
+        ),
+      ],
+    );
+  }
+}
+
 class SalaryEditWidgetState extends State<SalaryEditWidget> {
   TimeOfDay _startTime, _endTime;
   bool _savedNeeded = false;
@@ -21,7 +75,7 @@ class SalaryEditWidgetState extends State<SalaryEditWidget> {
 
     // TODO - Check settings if editing existing value
     _startTime = new TimeOfDay(hour: 9, minute: 0);
-    _endTime = new TimeOfDay(hour: 5, minute: 0);
+    _endTime = new TimeOfDay(hour: 17, minute: 0);
   }
 
   void handleDismissButton(BuildContext context) {
@@ -101,57 +155,29 @@ class SalaryEditWidgetState extends State<SalaryEditWidget> {
               suffixStyle: const TextStyle(color: Colors.green)
             ),
           ),
+
           new Padding(padding: const EdgeInsets.only(top: 20.0)),
-          new Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                new Text(
-                  'Start Time (optional):',
-                  style: Theme.of(context).textTheme.subhead
-                ),
-                new Expanded(
-                  child: new Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: <Widget>[
-                      new FlatButton(
-                        child: new Text(
-                          'SET',
-                          style: Theme.of(context).textTheme.button.copyWith(
-                            fontSize: 20.0
-                          )
-                        ),
-                        onPressed: () { },
-                        )
-                    ],
-                  )
-                ),
-              ],
+          new _TimePicker(
+            labelText: 'Start Time (optional):',
+            selectedTime: _startTime,
+            selectTime: (TimeOfDay t) {
+              setState(() {
+                _startTime = t;
+                _savedNeeded = true;
+              });
+            }
           ),
+
           new Padding(padding: const EdgeInsets.only(top: 10.0)),
-          new Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              new Text(
-                'End Time (optional):',
-                style: Theme.of(context).textTheme.subhead
-              ),
-              new Expanded(
-                child: new Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: <Widget>[
-                    new FlatButton(
-                      child: new Text(
-                       'SET',
-                        style: Theme.of(context).textTheme.button.copyWith(
-                          fontSize: 20.0
-                        )
-                      ),
-                      onPressed: () { },
-                    )
-                  ],
-                )
-              ),
-            ],
+          new _TimePicker(
+              labelText: 'End Time (optional):',
+              selectedTime: _endTime,
+              selectTime: (TimeOfDay t) {
+                setState(() {
+                  _endTime = t;
+                  _savedNeeded = true;
+                });
+              }
           ),
           new Padding(padding: const EdgeInsets.only(top: 20.0)),
           new Text(
@@ -174,7 +200,7 @@ class SalaryEditWidgetState extends State<SalaryEditWidget> {
           ),
           new Container(
             padding: const EdgeInsets.only(top: 40.0),
-            child: new Text('* indicated required field',
+            child: new Text('* indicates required field',
               style: Theme.of(context).textTheme.caption)
           )
         ]
