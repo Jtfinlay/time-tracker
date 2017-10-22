@@ -13,6 +13,45 @@ enum DismissDialogAction {
   save,
 }
 
+class _InputDropdown extends StatelessWidget {
+  const _InputDropdown({
+  Key key,
+  this.child,
+  this.labelText,
+  this.valueText,
+  this.valueStyle,
+  this.onPressed }) : super(key: key);
+
+  final String labelText;
+  final String valueText;
+  final TextStyle valueStyle;
+  final VoidCallback onPressed;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return new InkWell(
+      onTap: onPressed,
+      child: new InputDecorator(
+        decoration: new InputDecoration(
+          labelText: labelText,
+        ),
+        baseStyle: valueStyle,
+        child: new Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            new Text(valueText, style: valueStyle),
+            new Icon(Icons.arrow_drop_down,
+              color: Theme.of(context).brightness == Brightness.light ? Colors.grey.shade700 : Colors.white70
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class _TimePicker extends StatelessWidget {
   const _TimePicker({
     Key key,
@@ -28,7 +67,7 @@ class _TimePicker extends StatelessWidget {
   Future<Null> _selectTime(BuildContext context) async {
     final TimeOfDay picked = await showTimePicker(
       context: context,
-      initialTime: selectedTime
+      initialTime: selectedTime ?? new TimeOfDay(hour: 0, minute: 0)
     );
     if (picked != null && picked != selectedTime) {
       selectTime(picked);
@@ -37,30 +76,14 @@ class _TimePicker extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return new Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: <Widget>[
-        new Text(
-          labelText,
-          style: Theme.of(context).textTheme.subhead
-        ),
-        new Expanded(
-          child: new Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: <Widget>[
-              new FlatButton(
-                child: new Text(
-                  selectedTime.format(context),
-                  style: Theme.of(context).textTheme.button.copyWith(
-                    fontSize: 20.0
-                  )
-                ),
-                onPressed: () { },
-              )
-            ],
-          )
-        ),
-      ],
+    return new Expanded(
+      flex: 3,
+      child: new _InputDropdown(
+        labelText: labelText,
+        valueText: selectedTime?.format(context) ?? '',
+        valueStyle: Theme.of(context).textTheme.title,
+        onPressed: () { _selectTime(context); },
+      )
     );
   }
 }
@@ -74,8 +97,6 @@ class SalaryEditWidgetState extends State<SalaryEditWidget> {
     super.initState();
 
     // TODO - Check settings if editing existing value
-    _startTime = new TimeOfDay(hour: 9, minute: 0);
-    _endTime = new TimeOfDay(hour: 17, minute: 0);
   }
 
   void handleDismissButton(BuildContext context) {
@@ -157,27 +178,30 @@ class SalaryEditWidgetState extends State<SalaryEditWidget> {
           ),
 
           new Padding(padding: const EdgeInsets.only(top: 20.0)),
-          new _TimePicker(
-            labelText: 'Start Time (optional):',
-            selectedTime: _startTime,
-            selectTime: (TimeOfDay t) {
-              setState(() {
-                _startTime = t;
-                _savedNeeded = true;
-              });
-            }
-          ),
-
-          new Padding(padding: const EdgeInsets.only(top: 10.0)),
-          new _TimePicker(
-              labelText: 'End Time (optional):',
-              selectedTime: _endTime,
-              selectTime: (TimeOfDay t) {
-                setState(() {
-                  _endTime = t;
-                  _savedNeeded = true;
-                });
-              }
+          new Row(
+              children: <Widget>[
+                new _TimePicker(
+                    labelText: 'Start Time (optional):',
+                    selectedTime: _startTime,
+                    selectTime: (TimeOfDay t) {
+                      setState(() {
+                        _startTime = t;
+                        _savedNeeded = true;
+                      });
+                    }
+                ),
+                const SizedBox(width: 12.0),
+                new _TimePicker(
+                    labelText: 'End Time (optional):',
+                    selectedTime: _endTime,
+                    selectTime: (TimeOfDay t) {
+                      setState(() {
+                        _endTime = t;
+                        _savedNeeded = true;
+                      });
+                    }
+                ),
+              ],
           ),
           new Padding(padding: const EdgeInsets.only(top: 20.0)),
           new Text(
