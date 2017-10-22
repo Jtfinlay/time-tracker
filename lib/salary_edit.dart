@@ -114,6 +114,7 @@ class SalaryEditWidget extends StatefulWidget {
 
 class SalaryEditWidgetState extends State<SalaryEditWidget> {
   TimeOfDay _startTime, _endTime;
+  String _title, _salary;
   bool _savedNeeded = false;
   Map<String, bool> _weekDays;
 
@@ -134,6 +135,28 @@ class SalaryEditWidgetState extends State<SalaryEditWidget> {
     };
   }
 
+  String validateName(String value) {
+    if (value.isEmpty)
+    {
+      return 'Name is required.';
+    }
+    return null;
+  }
+
+  void handleTitleChanged(String title) {
+    if (title.isNotEmpty && title != _title) {
+      _title = title;
+      _savedNeeded = true;
+    }
+  }
+
+  void handleSalaryChanged(String salary) {
+    if (salary.isNotEmpty && salary != _salary) {
+      _salary = salary;
+      _savedNeeded = true;
+    }
+  }
+
   void handleWeekDayItemPressed(String weekday) {
     setState(() {
       _savedNeeded = true;
@@ -148,6 +171,12 @@ class SalaryEditWidgetState extends State<SalaryEditWidget> {
 
     });
   }
+//
+//  void handleSaveAndDismiss(BuildContext context) {
+//    if (title)
+//
+//    Navigator.pop(context, DismissDialogAction.save);
+//  }
 
   void handleDismissButton(BuildContext context) {
     if (!_savedNeeded) {
@@ -215,7 +244,7 @@ class SalaryEditWidgetState extends State<SalaryEditWidget> {
             child: new Text('SAVE', style: theme.textTheme.body1.copyWith(
                 color: Colors.white
             )),
-            onPressed: () => Navigator.pop(context, DismissDialogAction.save)
+            onPressed: () { handleSaveAndDismiss(context); }
           )
         ]
       ),
@@ -223,7 +252,7 @@ class SalaryEditWidgetState extends State<SalaryEditWidget> {
         padding: const EdgeInsets.all(16.0),
         children: <Widget>[
           new TextField(
-            onSubmitted: null,
+            onChanged: handleTitleChanged,
             decoration: new InputDecoration(
               icon: new Icon(Icons.work),
               hintText: 'Name of employer or your position',
@@ -231,7 +260,7 @@ class SalaryEditWidgetState extends State<SalaryEditWidget> {
             ),
           ),
           new TextField(
-            onSubmitted: null,
+            onChanged: handleSalaryChanged,
             keyboardType: TextInputType.number,
             decoration: new InputDecoration(
               labelText: 'Salary (Hourly) *',
