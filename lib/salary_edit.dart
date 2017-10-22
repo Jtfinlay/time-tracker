@@ -2,11 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
-class SalaryEditWidget extends StatefulWidget {
-  @override
-  State createState() => new SalaryEditWidgetState();
-}
-
 enum DismissDialogAction {
   cancel,
   discard,
@@ -88,15 +83,70 @@ class _TimePicker extends StatelessWidget {
   }
 }
 
+class _WeekDayItem extends StatelessWidget {
+  _WeekDayItem({
+    Key key,
+    this.labelText,
+    this.enabled,
+    this.onPressed
+}) : super(key: key);
+
+  final String labelText;
+  final bool enabled;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return new Expanded(
+      child: new FlatButton(
+        color: enabled ? Colors.blue : Colors.white,
+        child: new Text(labelText),
+        onPressed: onPressed
+      )
+    );
+  }
+}
+
+class SalaryEditWidget extends StatefulWidget {
+  @override
+  State createState() => new SalaryEditWidgetState();
+}
+
 class SalaryEditWidgetState extends State<SalaryEditWidget> {
   TimeOfDay _startTime, _endTime;
   bool _savedNeeded = false;
+  Map<String, bool> _weekDays;
+
 
   @override
   void initState() {
     super.initState();
 
     // TODO - Check settings if editing existing value
+    _weekDays = {
+      "Sunday": false,
+      "Monday": false,
+      "Tuesday": false,
+      "Wednesday": false,
+      "Thursday": false,
+      "Friday": false,
+      "Saturday": false,
+    };
+  }
+
+  void handleWeekDayItemPressed(String weekday) {
+    setState(() {
+      _savedNeeded = true;
+      _weekDays[weekday] = !_weekDays[weekday];
+
+      if (_startTime == null) {
+        _startTime = new TimeOfDay(hour: 0, minute: 0);
+      }
+      if (_endTime == null) {
+        _endTime = new TimeOfDay(hour:23, minute: 59);
+      }
+
+    });
   }
 
   void handleDismissButton(BuildContext context) {
@@ -133,6 +183,20 @@ class SalaryEditWidgetState extends State<SalaryEditWidget> {
         ]
       )
     );
+  }
+
+  Widget buildWeekDayList(BuildContext context) {
+    var children = <Widget>[new Padding(padding: const EdgeInsets.only(left:20.0))];
+
+    _weekDays.forEach((name, enabled) =>
+      children.add(new _WeekDayItem(
+        labelText: name[0],
+        enabled: enabled,
+        onPressed: () => handleWeekDayItemPressed(name),
+      ))
+    );
+
+    return new Row(children: children);
   }
 
   @override
@@ -203,25 +267,15 @@ class SalaryEditWidgetState extends State<SalaryEditWidget> {
                 ),
               ],
           ),
+
           new Padding(padding: const EdgeInsets.only(top: 20.0)),
           new Text(
             'Week days (optional)',
             style: Theme.of(context).textTheme.subhead
           ),
           new Padding(padding: const EdgeInsets.only(top: 20.0)),
-          new Row(
-            children: <Widget>[
-              new Padding(padding: const EdgeInsets.only(left:20.0)),
-              new Expanded( child: new Text('S') ),
-              new Expanded( child: new Text('M') ),
-              new Expanded( child: new Text('T') ),
-              new Expanded( child: new Text('W') ),
-              new Expanded( child: new Text('T') ),
-              new Expanded( child: new Text('F') ),
-              new Expanded( child: new Text('S') ),
-              new Padding(padding: const EdgeInsets.only(right:20.0)),
-            ],
-          ),
+          buildWeekDayList(context),
+
           new Container(
             padding: const EdgeInsets.only(top: 40.0),
             child: new Text('* indicates required field',
