@@ -38,7 +38,8 @@ class _InputDropdown extends StatelessWidget {
           children: <Widget>[
             new Text(valueText, style: valueStyle),
             new Icon(Icons.arrow_drop_down,
-              color: Theme.of(context).brightness == Brightness.light ? Colors.grey.shade700 : Colors.white70
+              color: Theme.of(context).brightness == Brightness.light ?
+                Colors.grey.shade700 : Colors.white70
             ),
           ],
         ),
@@ -171,12 +172,12 @@ class SalaryEditWidgetState extends State<SalaryEditWidget> {
 
     });
   }
-//
-//  void handleSaveAndDismiss(BuildContext context) {
+
+  void handleSaveAndDismiss(BuildContext context) {
 //    if (title)
-//
-//    Navigator.pop(context, DismissDialogAction.save);
-//  }
+
+    Navigator.pop(context, DismissDialogAction.save);
+  }
 
   void handleDismissButton(BuildContext context) {
     if (!_savedNeeded) {

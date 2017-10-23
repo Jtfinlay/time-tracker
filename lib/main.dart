@@ -10,9 +10,7 @@ class NavigationIconView {
     Color color,
     Widget page,
     TickerProvider sync,
-  }) : _icon = icon,
-       _color = color,
-       _page = page,
+  }) : _page = page,
         item = new BottomNavigationBarItem(
           icon: icon,
           title: title,
@@ -29,8 +27,6 @@ class NavigationIconView {
   }
 
   Widget _page;
-  Icon _icon;
-  Color _color;
   BottomNavigationBarItem item;
   AnimationController controller;
   CurvedAnimation _animation;

@@ -95,7 +95,7 @@ class TimerWidgetState extends State<TimerWidget> {
     else if (ms < 100)      formatMs = '0$ms'.substring(0,2);
     else                    formatMs = '$ms'.substring(0,2);
 
-    result += '${formatMinutes}:${formatSeconds}.${formatMs}';
+    result += '$formatMinutes:$formatSeconds.$formatMs';
     return result;
   }
 
