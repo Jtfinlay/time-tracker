@@ -144,14 +144,6 @@ class SalaryEditWidgetState extends State<SalaryEditWidget> {
     job = new JobData();
   }
 
-  String validateName(String value) {
-    if (value.isEmpty)
-    {
-      return 'Name is required.';
-    }
-    return null;
-  }
-
   void handleWeekDayItemPressed(String weekday) {
     setState(() {
       _formWasEdited = true;
@@ -186,6 +178,9 @@ class SalaryEditWidgetState extends State<SalaryEditWidget> {
   }
 
   void handleDismissButton(BuildContext context) {
+    final FormState form = _formKey.currentState;
+    form.validate();
+
     if (!_formWasEdited) {
       Navigator.pop(context, null);
       return;
