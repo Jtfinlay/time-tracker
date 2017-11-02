@@ -1,7 +1,47 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 
+import 'job_data.dart';
 import 'salary_edit.dart';
+
+class _SalaryDialogOption extends StatelessWidget {
+  _SalaryDialogOption({
+    Key key,
+    this.job
+  }) : super(key: key);
+
+  final JobData job;
+
+  void _addNewSalary(BuildContext context) {
+    Navigator.push(context, new MaterialPageRoute<DismissDialogAction>(
+        builder: (BuildContext context) => new SalaryEditWidget()
+    ));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return new SimpleDialogOption(
+      onPressed: () {
+        Navigator.pop(context, null);
+        _addNewSalary(context);
+      },
+      child: new Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          (job == null)
+              ? new Icon(Icons.add_circle, size: 36.0, color: Colors.blue)
+              : new Icon(Icons.work, size: 36.0, color: Colors.blue),
+          new Padding(
+            padding: const EdgeInsets.only(left: 16.0),
+            child: new Text((job == null) ? 'add new salary' : job.title),
+          ),
+        ],
+      ),
+    );
+  }
+}
 
 class SettingsPage extends StatefulWidget {
   @override
@@ -10,15 +50,26 @@ class SettingsPage extends StatefulWidget {
 
 class SettingsPageState extends State<SettingsPage> {
 
+  final dialogChildren = <Widget>[];
+  StreamSubscription<Event> _jobsSubscription;
+
   @override
   void initState() {
     super.initState();
+
+    final jobsDb = FirebaseDatabase.instance.reference().child('jobs');
+
+    dialogChildren.add(new _SalaryDialogOption());
+    _jobsSubscription = jobsDb.orderByKey().onChildAdded.listen((Event event) {
+      JobData job = new JobData(title: event.snapshot.value['title']);
+      dialogChildren.insert(dialogChildren.length-1,
+          new _SalaryDialogOption(job: job));
+    });
   }
 
-  void _addNewSalary(BuildContext context) {
-    Navigator.push(context, new MaterialPageRoute<DismissDialogAction>(
-        builder: (BuildContext context) => new SalaryEditWidget()
-    ));
+  @override
+  void dispose() {
+    _jobsSubscription.cancel();
   }
 
   void _manageSalaries(context) {
@@ -26,25 +77,7 @@ class SettingsPageState extends State<SettingsPage> {
         context: context,
         child: new SimpleDialog(
             title: new Text('Edit jobs'),
-            children: <Widget>[
-              new SimpleDialogOption(
-                onPressed: () {
-                  Navigator.pop(context, null);
-                  _addNewSalary(context);
-                },
-                child: new Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    new Icon(Icons.add_circle, size: 36.0, color: Colors.blue),
-                    new Padding(
-                        padding: const EdgeInsets.only(left: 16.0),
-                        child: new Text('add new salary'),
-                    ),
-                  ],
-                ),
-              ),
-            ],
+            children: dialogChildren
         )
     );
   }
