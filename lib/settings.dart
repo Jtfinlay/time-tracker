@@ -14,9 +14,10 @@ class _SalaryDialogOption extends StatelessWidget {
   final JobData job;
 
   void _addNewSalary(BuildContext context) {
-    Navigator.push(context, new MaterialPageRoute<DismissDialogAction>(
+    Navigator.push(context, new MaterialPageRoute<JobData>(
         builder: (BuildContext context) => new SalaryEditWidget()
-    ));
+    )).then((JobData result) { print('Push result: ${result.title}'); });
+
   }
 
   @override
@@ -61,7 +62,7 @@ class SettingsPageState extends State<SettingsPage> {
 
     dialogChildren.add(new _SalaryDialogOption());
     _jobsSubscription = jobsDb.orderByKey().onChildAdded.listen((Event event) {
-      JobData job = new JobData(title: event.snapshot.value['title']);
+      JobData job = new JobData.fromTitle(event.snapshot.value['title']);
       dialogChildren.insert(dialogChildren.length-1,
           new _SalaryDialogOption(job: job));
     });

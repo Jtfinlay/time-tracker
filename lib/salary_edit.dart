@@ -4,12 +4,6 @@ import 'package:flutter/material.dart';
 
 import 'job_data.dart';
 
-enum DismissDialogAction {
-  cancel,
-  discard,
-  save,
-}
-
 class _InputDropdown extends StatelessWidget {
   const _InputDropdown({
   Key key,
@@ -123,8 +117,6 @@ class SalaryEditWidgetState extends State<SalaryEditWidget> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   final GlobalKey<FormState> _formKey = new GlobalKey<FormState>();
 
-
-
   @override
   void initState() {
     super.initState();
@@ -160,23 +152,10 @@ class SalaryEditWidgetState extends State<SalaryEditWidget> {
       showInSnackBar('Please fix the errors in red before submitting.');
     } else {
       form.save();
-//      jobsDb.push().set({
-//        'title': job.title,
-//        'salary': job.salary,
-//        'startTime': job.startTime,
-//        'endTime': job.endTime,
-//        'Sunday': job.weekDays['Sunday'],
-//        'Monday': job.weekDays['Monday'],
-//        'Tuesday': job.weekDays['Tuesday'],
-//        'Wednesday': job.weekDays['Wednesday'],
-//        'Thursday': job.weekDays['Thursday'],
-//        'Friday': job.weekDays['Friday'],
-//        'Saturday': job.weekDays['Saturday'],
-//      });
 
       // TODO - snackbar doesn't show since scaffold disappears.
       showInSnackBar('${job.title} has been added');
-      Navigator.pop(context, DismissDialogAction.save);
+      Navigator.pop(context, job);
     }
   }
 
@@ -194,7 +173,7 @@ class SalaryEditWidgetState extends State<SalaryEditWidget> {
         color: theme.textTheme.caption.color
     );
 
-    showDialog<DismissDialogAction>(
+    showDialog<JobData>(
       context: context,
       child: new AlertDialog(
         content: new Text(
@@ -204,13 +183,13 @@ class SalaryEditWidgetState extends State<SalaryEditWidget> {
         actions: <Widget>[
           new FlatButton(
             child: new Text('CANCEL'),
-            onPressed: () => Navigator.pop(context, DismissDialogAction.cancel)
+            onPressed: () => Navigator.pop(context, null)
           ),
           new FlatButton(
             child: new Text('DISCARD'),
             onPressed: () {
               Navigator.of(context)
-                ..pop(DismissDialogAction.discard) // pop cancel/discard dialog
+                ..pop(null) // pop cancel/discard dialog
                 ..pop(); // pop the SalaryEditWidget
             }
           )

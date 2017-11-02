@@ -1,27 +1,8 @@
 import 'package:flutter/material.dart';
 
 class JobData {
-  JobData({
-    this.title,
-    this.salary,
-    this.startTime,
-    this.endTime,
-    bool sunday,
-    bool monday,
-    bool tuesday,
-    bool wednesday,
-    bool thursday,
-    bool friday,
-    bool saturday
-  }) {
-    weekDays['Sunday'] = sunday;
-    weekDays['Monday'] = sunday;
-    weekDays['Tuesday'] = sunday;
-    weekDays['Wednesday'] = sunday;
-    weekDays['Thursday'] = sunday;
-    weekDays['Friday'] = sunday;
-    weekDays['Saturday'] = sunday;
-  }
+  JobData.fromTitle(this.title);
+  JobData();
 
   String title = '';
   String salary = '';
