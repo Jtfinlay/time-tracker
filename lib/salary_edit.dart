@@ -312,10 +312,17 @@ class SalaryEditWidgetState extends State<SalaryEditWidget> {
             ),
 
             new Padding(padding: const EdgeInsets.only(top: 20.0)),
-            new Text(
-                'Week days (optional)',
-                style: Theme.of(context).textTheme.subhead
+            new Row(
+              children: <Widget>[
+                new Icon(Icons.calendar_today, size: 20.0, color: Colors.grey),
+                new Padding(padding: const EdgeInsets.symmetric(horizontal: 20.0)),
+                new Text(
+                    'Repeat (optional)',
+                    style: Theme.of(context).textTheme.subhead
+                ),
+              ]
             ),
+
             new Padding(padding: const EdgeInsets.only(top: 20.0)),
             buildWeekDayList(context),
 
