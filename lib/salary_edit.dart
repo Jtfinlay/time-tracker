@@ -105,11 +105,17 @@ class _WeekDayItem extends StatelessWidget {
 }
 
 class SalaryEditWidget extends StatefulWidget {
+  SalaryEditWidget(this.job, {Key key}) : super(key: key);
+
+  final JobData job;
+
   @override
-  State createState() => new SalaryEditWidgetState();
+  State createState() => new SalaryEditWidgetState(job);
 }
 
 class SalaryEditWidgetState extends State<SalaryEditWidget> {
+  SalaryEditWidgetState(this.job);
+
   bool _autovalidate = false;
   bool _formWasEdited = false;
   JobData job = null;
@@ -120,9 +126,8 @@ class SalaryEditWidgetState extends State<SalaryEditWidget> {
   @override
   void initState() {
     super.initState();
-
-    // TODO - Check settings if editing existing value
-    job = new JobData();
+    job ??= new JobData();
+    print('Job: ${job.title}');
   }
 
   void handleWeekDayItemPressed(String weekday) {
@@ -262,6 +267,7 @@ class SalaryEditWidgetState extends State<SalaryEditWidget> {
                 hintText: 'Name of employer or your position',
                 labelText: 'Job Title *',
               ),
+              initialValue: job.title,
               onSaved: (String value) { job.title = value; },
               validator: _validateName,
             ),
@@ -272,6 +278,7 @@ class SalaryEditWidgetState extends State<SalaryEditWidget> {
                 suffixText: 'USD',
                 suffixStyle: const TextStyle(color: Colors.green)
               ),
+              initialValue: job.salary,
               keyboardType: TextInputType.number,
               onSaved: (String value) { job.salary = value; },
               validator: _validateSalary
@@ -281,14 +288,14 @@ class SalaryEditWidgetState extends State<SalaryEditWidget> {
             new Row(
               children: <Widget>[
                 new _TimePicker(
-                    labelText: 'Start Time (optional):',
-                    selectedTime: job.startTime,
-                    selectTime: (TimeOfDay t) {
-                      setState(() {
-                        _formWasEdited = true;
-                        job.startTime = t;
-                      });
-                    }
+                  labelText: 'Start Time (optional):',
+                  selectedTime: job.startTime,
+                  selectTime: (TimeOfDay t) {
+                    setState(() {
+                      _formWasEdited = true;
+                      job.startTime = t;
+                    });
+                  }
                 ),
                 const SizedBox(width: 12.0),
                 new _TimePicker(
