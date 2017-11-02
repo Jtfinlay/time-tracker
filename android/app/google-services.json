@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "33971459835",
+    "firebase_url": "https://timetracker-73a65.firebaseio.com",
+    "project_id": "timetracker-73a65",
+    "storage_bucket": "timetracker-73a65.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:33971459835:android:f5e8e473960f8804",
+        "android_client_info": {
+          "package_name": "com.yourcompany.timetrackermobile"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "33971459835-j67jaru3otanniop76hfsmnbed9871g7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAmKYuga5uC4tW8xSo_-pFC1t_t_KT4k6Y"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
