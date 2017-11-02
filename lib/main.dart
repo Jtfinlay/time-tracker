@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_database/firebase_database.dart';
 
 import 'settings.dart';
 import 'timerWidget.dart';
@@ -46,6 +47,8 @@ class NavigationIconView {
 }
 
 void main() {
+  FirebaseDatabase.instance.setPersistenceEnabled(true);
+  FirebaseDatabase.instance.goOffline();
   runApp(new MyApp());
 }
 
@@ -72,6 +75,7 @@ class HomeScreenState extends State<HomeScreen>
   @override
   void initState() {
     super.initState();
+
     _navigationViews = <NavigationIconView>[
       new NavigationIconView(
           icon: new Icon(Icons.access_alarm),

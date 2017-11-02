@@ -1,26 +1,14 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:firebase_database/firebase_database.dart';
+
+import 'job_data.dart';
 
 enum DismissDialogAction {
   cancel,
   discard,
   save,
-}
-
-class JobData {
-  String title = '';
-  String salary = '';
-  TimeOfDay startTime, endTime;
-  Map<String,bool> weekDays = {
-    "Sunday": false,
-    "Monday": false,
-    "Tuesday": false,
-    "Wednesday": false,
-    "Thursday": false,
-    "Friday": false,
-    "Saturday": false,
-  };
 }
 
 class _InputDropdown extends StatelessWidget {
@@ -136,9 +124,15 @@ class SalaryEditWidgetState extends State<SalaryEditWidget> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   final GlobalKey<FormState> _formKey = new GlobalKey<FormState>();
 
+  final jobsDb = FirebaseDatabase.instance.reference().child('jobs');
+
   @override
   void initState() {
     super.initState();
+
+    var result = jobsDb.orderByKey().onChildAdded.listen((Event event) {
+      print('Child added: ${event.snapshot.value}');
+    });
 
     // TODO - Check settings if editing existing value
     job = new JobData();
@@ -155,7 +149,6 @@ class SalaryEditWidgetState extends State<SalaryEditWidget> {
       if (job.endTime == null) {
         job.endTime = new TimeOfDay(hour:23, minute: 59);
       }
-
     });
   }
 
@@ -172,6 +165,21 @@ class SalaryEditWidgetState extends State<SalaryEditWidget> {
       showInSnackBar('Please fix the errors in red before submitting.');
     } else {
       form.save();
+      jobsDb.push().set({
+        'title': job.title,
+        'salary': job.salary,
+        'startTime': job.startTime,
+        'endTime': job.endTime,
+        'Sunday': job.weekDays['Sunday'],
+        'Monday': job.weekDays['Monday'],
+        'Tuesday': job.weekDays['Tuesday'],
+        'Wednesday': job.weekDays['Wednesday'],
+        'Thursday': job.weekDays['Thursday'],
+        'Friday': job.weekDays['Friday'],
+        'Saturday': job.weekDays['Saturday'],
+      });
+
+      // TODO - snackbar doesn't show since scaffold disappears.
       showInSnackBar('${job.title} has been added');
       Navigator.pop(context, DismissDialogAction.save);
     }
