@@ -16,6 +16,7 @@
         android:name="io.flutter.app.FlutterApplication"
         android:label="timetracker_mobile"
         android:icon="@mipmap/ic_launcher">
+        <service android:name=".TimerIntentService"/>
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

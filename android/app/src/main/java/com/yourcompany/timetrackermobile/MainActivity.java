@@ -1,5 +1,6 @@
 package com.yourcompany.timetrackermobile;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import io.flutter.app.FlutterActivity;
@@ -23,6 +24,8 @@ public class MainActivity extends FlutterActivity {
             public void onMethodCall(MethodCall call, Result result) {
                 if (call.method.equals("getTest")) {
                     result.success("woohoo!");
+                    Intent intent = new Intent(MainActivity.this, TimerIntentService.class);
+                    startService(intent);
                 } else {
                     result.notImplemented();
                 }
