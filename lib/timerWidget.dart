@@ -25,6 +25,9 @@ class TimerWidgetState extends State<TimerWidget> {
 
   @override
   void dispose() {
+    print('disposing timer widget');
+    startService();
+
     _stopWatch.stop();
     _redrawTimer.cancel();
     super.dispose();
@@ -41,19 +44,22 @@ class TimerWidgetState extends State<TimerWidget> {
 
   bool get _isRunning => _stopWatch.isRunning;
 
-  void stop() {
-    _stopWatch.stop();
-    setState(() {});
-  }
-
-  start() async {
+  startService() async {
     try {
       final String result = await platform.invokeMethod('getTest');
       print('Channel result: $result');
     } on PlatformException catch (e) {
       print('Exception thrown: ${e.message}');
     }
+  }
 
+
+  void stop() {
+    _stopWatch.stop();
+    setState(() {});
+  }
+
+  void start() {
     _stopWatch.start();
     setState(() {});
   }
