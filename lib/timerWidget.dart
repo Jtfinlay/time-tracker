@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'dart:async';
 
@@ -10,6 +11,7 @@ class TimerWidget extends StatefulWidget {
 class TimerWidgetState extends State<TimerWidget> {
   Timer _redrawTimer;
   Stopwatch _stopWatch;
+  static const platform = const MethodChannel('finlay.com/timer');
 
   @override
   void initState() {
@@ -43,7 +45,13 @@ class TimerWidgetState extends State<TimerWidget> {
     setState(() {});
   }
 
-  void start() {
+  start() async {
+    try {
+      final String result = await platform.invokeMethod('getTest');
+      print('Invoke result: ${result}');
+    } on PlatformException catch (e) {
+      print('Exception calling channel: ${e.message}');
+    }
     _stopWatch.start();
     setState(() {});
   }
