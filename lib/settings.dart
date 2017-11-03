@@ -73,6 +73,7 @@ class SettingsPageState extends State<SettingsPage> {
   @override
   void dispose() {
     _jobsSubscription.cancel();
+    super.dispose();
   }
 
   void _manageSalaries(context) {
