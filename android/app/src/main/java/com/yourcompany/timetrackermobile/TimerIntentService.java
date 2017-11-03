@@ -1,6 +1,8 @@
 package com.yourcompany.timetrackermobile;
 
 import android.app.IntentService;
+import android.app.Notification;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.widget.Toast;
 
@@ -12,7 +14,22 @@ public class TimerIntentService extends IntentService {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Toast.makeText(this, "service starting", Toast.LENGTH_SHORT).show();
+        String CHANNEL_ID = "finlay.tracker01";
+
+        Intent notificationIntent = new Intent(this, MainActivity.class);
+        PendingIntent pendingIntent =
+                PendingIntent.getActivity(this, 0, notificationIntent, 0);
+
+        Notification notification =
+                new Notification.Builder(this)
+                        .setContentTitle("Toilet timer")
+                        .setContentText("0:42")
+                        .setContentIntent(pendingIntent)
+                        .setTicker("ticker.?")
+                        .build();
+
+
+        startForeground(3444, notification);
         return super.onStartCommand(intent, flags, startId);
     }
 
