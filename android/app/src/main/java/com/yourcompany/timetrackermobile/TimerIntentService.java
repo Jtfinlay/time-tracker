@@ -24,6 +24,7 @@ public class TimerIntentService extends IntentService {
                 new Notification.Builder(this)
                         .setContentTitle("Toilet timer")
                         .setContentText("0:42")
+                        .setSmallIcon(R.drawable.ic_timer)
                         .setContentIntent(pendingIntent)
                         .setTicker("ticker.?")
                         .build();
