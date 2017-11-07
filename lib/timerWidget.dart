@@ -3,6 +3,8 @@ import 'package:flutter/services.dart';
 
 import 'dart:async';
 
+import 'submit_log_page.dart';
+
 class TimerWidget extends StatefulWidget {
   @override
   State createState() => new TimerWidgetState();
@@ -74,7 +76,6 @@ class TimerWidgetState extends State<TimerWidget> with TickerProviderStateMixin{
     }
   }
 
-
   void stop() {
     _stopWatch.stop();
     setState(() {});
@@ -95,6 +96,14 @@ class TimerWidgetState extends State<TimerWidget> with TickerProviderStateMixin{
     setState(() {
       _controller.reverse();
     });
+  }
+
+  void submit() {
+    _stopWatch.stop();
+
+    Navigator.push(context, new MaterialPageRoute(
+        builder: (BuildContext context) => new SubmitLogPage()
+    ));
   }
 
   String prettifyElapsedTime() {
@@ -173,7 +182,7 @@ class TimerWidgetState extends State<TimerWidget> with TickerProviderStateMixin{
                 ),
                 new RaisedButton(
                     child: const Text('SUBMIT'),
-                    onPressed: () { }
+                    onPressed: submit
                 ),
               ],
             )
