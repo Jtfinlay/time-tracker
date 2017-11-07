@@ -8,15 +8,29 @@ class TimerWidget extends StatefulWidget {
   State createState() => new TimerWidgetState();
 }
 
-class TimerWidgetState extends State<TimerWidget> {
+class TimerWidgetState extends State<TimerWidget> with TickerProviderStateMixin{
   Timer _redrawTimer;
   Stopwatch _stopWatch;
+
+  AnimationController _controller;
+  Animation<double> _submitButtonAnimation;
 
   static const platform = const MethodChannel('finlay.io/timer');
 
   @override
   void initState() {
     super.initState();
+
+    _controller = new AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 180)
+    );
+    _submitButtonAnimation = new CurvedAnimation(
+        parent: _controller,
+        curve: new Interval(0.0, 1.0, curve: Curves.linear)
+    );
+    _controller.reverse();
+
     _redrawTimer = new Timer.periodic(
         new Duration(milliseconds: 15),
         (Timer t) => setState(() {}));
@@ -25,8 +39,6 @@ class TimerWidgetState extends State<TimerWidget> {
 
   @override
   void dispose() {
-//    startService();
-
     _stopWatch.stop();
     _redrawTimer.cancel();
     super.dispose();
@@ -45,7 +57,8 @@ class TimerWidgetState extends State<TimerWidget> {
 
   startService() async {
     try {
-      final String result = await platform.invokeMethod('start', 8000);
+      final String result = await platform.invokeMethod('start',
+          _stopWatch.elapsedMilliseconds);
       print('Channel result: $result');
     } on PlatformException catch (e) {
       print('Exception thrown: ${e.message}');
@@ -71,13 +84,17 @@ class TimerWidgetState extends State<TimerWidget> {
   void start() {
     _stopWatch.start();
     startService();
-    setState(() {});
+    setState(() {
+      _controller.forward();
+    });
   }
 
   void reset() {
     _stopWatch.stop();
     _stopWatch.reset();
-    setState(() {});
+    setState(() {
+      _controller.reverse();
+    });
   }
 
   String prettifyElapsedTime() {
@@ -145,6 +162,22 @@ class TimerWidgetState extends State<TimerWidget> {
               tooltip: _primaryButtonTooltip,
               onPressed: () => _isRunning ? stop() : start(),
           ),
+          new ScaleTransition(
+            scale: _submitButtonAnimation,
+            child: new ButtonBar(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                new RaisedButton(
+                  child: const Text('DISCARD'),
+                  onPressed: reset
+                ),
+                new RaisedButton(
+                    child: const Text('SUBMIT'),
+                    onPressed: () { }
+                ),
+              ],
+            )
+          )
         ]
       )
     );

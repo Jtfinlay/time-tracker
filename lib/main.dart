@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 
 import 'settings.dart';
-import 'timerWidget.dart';
+import 'timer_page.dart';
 
 class NavigationIconView {
   NavigationIconView({
@@ -81,7 +81,7 @@ class HomeScreenState extends State<HomeScreen>
           icon: new Icon(Icons.access_alarm),
           title: new Text('Timer'),
           color: Colors.brown[500],
-          page: new TimerWidget(),
+          page: new TimerPage(),
           sync: this,
           ),
       new NavigationIconView(
