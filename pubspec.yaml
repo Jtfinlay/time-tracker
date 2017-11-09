@@ -12,6 +12,7 @@ dev_dependencies:
   firebase_analytics: 0.1.1
   firebase_auth: 0.3.1
   firebase_database: 0.1.2
+  uuid: 0.5.3
 
 # For information on the generic Dart part of this file, see the
 # following page: https://www.dartlang.org/tools/pub/pubspec

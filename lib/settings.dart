@@ -5,40 +5,77 @@ import 'package:firebase_database/firebase_database.dart';
 import 'job_data.dart';
 import 'salary_edit.dart';
 
-class _SalaryDialogOption extends StatelessWidget {
-  _SalaryDialogOption({
+class _SalaryNewDialogOption extends StatelessWidget {
+  _SalaryNewDialogOption({
     Key key,
-    this.job
+    this.onSubmit
   }) : super(key: key);
 
-  final JobData job;
+  final ValueChanged<JobData> onSubmit;
 
-  void _addNewSalary(BuildContext context) {
+  void _addSalary(BuildContext context) {
     Navigator.push(context, new MaterialPageRoute<JobData>(
-        builder: (BuildContext context) => new SalaryEditWidget(job)
+        builder: (BuildContext context) => new SalaryEditWidget(null)
     )).then((JobData result) {
-//      print('Push result: ${result.title}');
+      if (result != null) {
+        onSubmit(result);
+      }
     });
-
   }
 
   @override
   Widget build(BuildContext context) {
     return new SimpleDialogOption(
-      onPressed: () {
-        Navigator.pop(context, null);
-        _addNewSalary(context);
-      },
+      onPressed: () { Navigator.pop(context, null); _addSalary(context); },
       child: new Row(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          (job == null)
-              ? new Icon(Icons.add_circle, size: 36.0, color: Colors.blue)
-              : new Icon(Icons.work, size: 36.0, color: Colors.blue),
+          new Icon(Icons.add_circle, size: 36.0, color: Colors.blue),
           new Padding(
             padding: const EdgeInsets.only(left: 16.0),
-            child: new Text((job == null) ? 'add new salary' : job.title),
+            child: new Text('add new salary'),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _SalaryUpdateDialogOption extends StatelessWidget {
+  _SalaryUpdateDialogOption({
+    Key key,
+    this.job,
+    this.onUpdate,
+    this.onDelete
+  }) : super(key: key);
+
+  final JobData job;
+  final ValueChanged<JobData> onUpdate;
+  final ValueChanged<String> onDelete;
+
+  void _updateSalary(BuildContext context) {
+    Navigator.push(context, new MaterialPageRoute<JobData>(
+        builder: (BuildContext context) => new SalaryEditWidget(job)
+    )).then((JobData result) {
+      if (result != null) {
+        onUpdate(result);
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return new SimpleDialogOption(
+      onPressed: () { Navigator.pop(context, null); _updateSalary(context); },
+      child: new Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          new Icon(Icons.work, size: 36.0, color: Colors.blue),
+          new Padding(
+            padding: const EdgeInsets.only(left: 16.0),
+            child: new Text(job.title),
           ),
         ],
       ),
@@ -53,20 +90,28 @@ class SettingsPage extends StatefulWidget {
 
 class SettingsPageState extends State<SettingsPage> {
 
-  final dialogChildren = <Widget>[];
+  final _dialogChildren = <Widget>[];
   StreamSubscription<Event> _jobsSubscription;
+  DatabaseReference _jobsDb;
 
   @override
   void initState() {
     super.initState();
 
-    final jobsDb = FirebaseDatabase.instance.reference().child('jobs');
+    _jobsDb = FirebaseDatabase.instance.reference().child('jobs');
 
-    dialogChildren.add(new _SalaryDialogOption());
-    _jobsSubscription = jobsDb.orderByKey().onChildAdded.listen((Event event) {
+    _dialogChildren.add(new _SalaryNewDialogOption(onSubmit: _addJob));
+
+    _jobsSubscription = _jobsDb.orderByKey().onChildAdded.listen((Event event) {
       JobData job = new JobData.fromDb(event.snapshot.value);
-      dialogChildren.insert(dialogChildren.length-1,
-          new _SalaryDialogOption(job: job));
+      _dialogChildren.insert(
+          _dialogChildren.length-1, // keep the last item the 'new' option.
+          new _SalaryUpdateDialogOption(
+              job: job,
+              onUpdate: _updateJob,
+              onDelete: _deleteJob
+          )
+      );
     });
   }
 
@@ -81,9 +126,22 @@ class SettingsPageState extends State<SettingsPage> {
         context: context,
         child: new SimpleDialog(
             title: new Text('Edit jobs'),
-            children: dialogChildren
+            children: _dialogChildren
         )
     );
+  }
+
+  void _addJob(JobData job) {
+    print('Add job ${job.toMap().toString()}');
+    _jobsDb.push().set(job.toMap());
+  }
+
+  void _updateJob(JobData job) {
+    print('Update job ${job.toMap().toString()}');
+  }
+
+  void _deleteJob(String uid) {
+    print('Deleting $uid');
   }
 
   void _sendFeedback() {

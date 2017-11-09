@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:firebase_database/firebase_database.dart';
 
 import 'dart:async';
-
-import 'submit_log_page.dart';
 
 class TimerWidget extends StatefulWidget {
   @override
@@ -18,10 +17,13 @@ class TimerWidgetState extends State<TimerWidget> with TickerProviderStateMixin{
   Animation<double> _submitButtonAnimation;
 
   static const platform = const MethodChannel('finlay.io/timer');
+  DatabaseReference _logsDb;
 
   @override
   void initState() {
     super.initState();
+
+    _logsDb = FirebaseDatabase.instance.reference().child('logs');
 
     _controller = new AnimationController(
       vsync: this,
@@ -100,10 +102,13 @@ class TimerWidgetState extends State<TimerWidget> with TickerProviderStateMixin{
 
   void submit() {
     _stopWatch.stop();
-
-    Navigator.push(context, new MaterialPageRoute(
-        builder: (BuildContext context) => new SubmitLogPage()
-    ));
+    _logsDb.push().set({
+      'elapsedTime': _stopWatch.elapsedMilliseconds,
+      'timestamp': new DateTime.now(),
+      'salaryId' : null,
+      'salaryName' : null,
+      'salarySalary': 0
+    });
   }
 
   String prettifyElapsedTime() {
