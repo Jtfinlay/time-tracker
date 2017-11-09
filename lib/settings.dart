@@ -52,7 +52,7 @@ class _SalaryUpdateDialogOption extends StatelessWidget {
 
   final JobData job;
   final ValueChanged<JobData> onUpdate;
-  final ValueChanged<String> onDelete;
+  final ValueChanged<JobData> onDelete;
 
   void _updateSalary(BuildContext context) {
     Navigator.push(context, new MaterialPageRoute<JobData>(
@@ -72,10 +72,16 @@ class _SalaryUpdateDialogOption extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          new Icon(Icons.work, size: 36.0, color: Colors.blue),
-          new Padding(
-            padding: const EdgeInsets.only(left: 16.0),
-            child: new Text(job.title),
+          new Icon(Icons.work, size: 30.0, color: Colors.blue),
+          new Expanded(
+            child: new Padding(
+                padding: const EdgeInsets.only(left: 16.0),
+                child: new Text(job.title, maxLines: 1),
+            )
+          ),
+          new IconButton(
+            icon: new Icon(Icons.delete, size: 36.0, color: Colors.grey),
+            onPressed: () => onDelete(job),
           ),
         ],
       ),
@@ -103,7 +109,7 @@ class SettingsPageState extends State<SettingsPage> {
     _dialogChildren.add(new _SalaryNewDialogOption(onSubmit: _addJob));
 
     _jobsSubscription = _jobsDb.orderByKey().onChildAdded.listen((Event event) {
-      JobData job = new JobData.fromDb(event.snapshot.value);
+      JobData job = new JobData.fromDb(event.snapshot.key, event.snapshot.value);
       _dialogChildren.insert(
           _dialogChildren.length-1, // keep the last item the 'new' option.
           new _SalaryUpdateDialogOption(
@@ -140,8 +146,42 @@ class SettingsPageState extends State<SettingsPage> {
     print('Update job ${job.toMap().toString()}');
   }
 
-  void _deleteJob(String uid) {
-    print('Deleting $uid');
+  void _deleteJob(JobData job) {
+    print('Deleting ${job.uid}');
+    Navigator.pop(context, null);
+
+    final ThemeData theme = Theme.of(context);
+    final TextStyle dialogTextStyle = theme.textTheme.subhead.copyWith(
+        color: theme.textTheme.caption.color
+    );
+
+    showDialog(
+      context: context,
+      child: new AlertDialog(
+        content: new Text(
+          'Delete job \'${job.title}\'?',
+          style: dialogTextStyle
+        ),
+        actions: <Widget>[
+          new FlatButton(
+            child: new Text('CANCEL'),
+            onPressed: () => Navigator.pop(context, null)
+          ),
+          new FlatButton(
+            child: new Text('DELETE'),
+            onPressed: () {
+              Navigator.of(context)
+              ..pop(); // pop the SalaryEditWidget
+
+              //TODO - Working on getting delete working
+//              _jobsDb.equalTo(job.uid).onChildAdded.listen((Event event) {
+//                event.snapshot.
+//              });
+            }
+          )
+        ]
+      )
+    );
   }
 
   void _sendFeedback() {

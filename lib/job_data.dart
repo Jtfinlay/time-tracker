@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
-
-import 'package:uuid/uuid.dart';
-
 class JobData {
   JobData();
 
-  JobData.fromDb(dynamic value)
+  JobData.fromDb(String key, dynamic value)
   {
-    uid = value['uid'];
+    print('fromDB: $key - $value');
+    uid = key;
     title = value['title'];
     salary = value['salary'];
     if (value['startTime'] != null) {
@@ -41,7 +39,6 @@ class JobData {
       new DateTime(1980, 1, 1, endTime.hour, endTime.minute);
 
     Map<String, Object> result = {
-      'uid': uid,
       'title': title,
       'salary': salary,
       'weekDays': enabledWeekDays.join(',')
@@ -55,7 +52,7 @@ class JobData {
     return result;
   }
 
-  String uid = (new Uuid()).v4();
+  String uid = null;
   String title = '';
   String salary = '';
   TimeOfDay startTime, endTime;
