@@ -1,15 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:firebase_database/firebase_database.dart';
 
 import 'dart:async';
 
 class TimerWidget extends StatefulWidget {
+  TimerWidget({
+    Key key,
+    this.onSubmit
+  }) : super(key: key);
+
+  final ValueChanged<int> onSubmit;
+
   @override
-  State createState() => new TimerWidgetState();
+  State createState() => new _TimerWidgetState(onSubmit);
 }
 
-class TimerWidgetState extends State<TimerWidget> with TickerProviderStateMixin{
+class _TimerWidgetState extends State<TimerWidget> with TickerProviderStateMixin{
+  _TimerWidgetState(
+    this.onSubmit
+  );
+
+  final ValueChanged<int> onSubmit;
+
   Timer _redrawTimer;
   Stopwatch _stopWatch;
 
@@ -17,13 +29,10 @@ class TimerWidgetState extends State<TimerWidget> with TickerProviderStateMixin{
   Animation<double> _submitButtonAnimation;
 
   static const platform = const MethodChannel('finlay.io/timer');
-  DatabaseReference _logsDb;
 
   @override
   void initState() {
     super.initState();
-
-    _logsDb = FirebaseDatabase.instance.reference().child('logs');
 
     _controller = new AnimationController(
       vsync: this,
@@ -102,13 +111,7 @@ class TimerWidgetState extends State<TimerWidget> with TickerProviderStateMixin{
 
   void submit() {
     _stopWatch.stop();
-    _logsDb.push().set({
-      'elapsedTime': _stopWatch.elapsedMilliseconds,
-      'timestamp': new DateTime.now(),
-      'salaryId' : null,
-      'salaryName' : null,
-      'salarySalary': 0
-    });
+    onSubmit(_stopWatch.elapsedMilliseconds);
   }
 
   String prettifyElapsedTime() {

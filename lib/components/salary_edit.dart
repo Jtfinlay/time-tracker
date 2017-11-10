@@ -127,7 +127,6 @@ class SalaryEditWidgetState extends State<SalaryEditWidget> {
   void initState() {
     super.initState();
     job ??= new JobData();
-    print('Job: ${job.title}');
   }
 
   void handleWeekDayItemPressed(String weekday) {
