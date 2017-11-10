@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'timerWidget.dart';
+import '../components/timerWidget.dart';
 
 class TimerPage extends StatelessWidget {
   @override

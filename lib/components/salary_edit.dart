@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
-import 'job_data.dart';
+import 'package:timetracker_mobile/models/job_data.dart';
 
 class _InputDropdown extends StatelessWidget {
   const _InputDropdown({

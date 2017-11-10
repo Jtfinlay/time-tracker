@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 
-import 'settings.dart';
-import 'timer_page.dart';
+import 'package:timetracker_mobile/screens/settings.dart';
+import 'package:timetracker_mobile/screens/timer_page.dart';
 
 class NavigationIconView {
   NavigationIconView({

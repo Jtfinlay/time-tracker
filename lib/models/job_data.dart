@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+
 class JobData {
   JobData();
 
   JobData.fromDb(String key, dynamic value)
   {
-    print('fromDB: $key - $value');
     uid = key;
     title = value['title'];
     salary = value['salary'];

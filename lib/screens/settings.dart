@@ -2,8 +2,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 
-import 'job_data.dart';
-import 'salary_edit.dart';
+import 'package:timetracker_mobile/models/job_data.dart';
+import '../components/salary_edit.dart';
 
 class _SalaryNewDialogOption extends StatelessWidget {
   _SalaryNewDialogOption({
