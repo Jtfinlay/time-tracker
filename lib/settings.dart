@@ -97,7 +97,7 @@ class SettingsPage extends StatefulWidget {
 class SettingsPageState extends State<SettingsPage> {
 
   final _dialogChildren = <Widget>[];
-  StreamSubscription<Event> _jobsSubscription;
+  StreamSubscription<Event> _jobAdded, _jobUpdated, _jobRemoved;
   DatabaseReference _jobsDb;
 
   @override
@@ -108,7 +108,7 @@ class SettingsPageState extends State<SettingsPage> {
 
     _dialogChildren.add(new _SalaryNewDialogOption(onSubmit: _addJob));
 
-    _jobsSubscription = _jobsDb.orderByKey().onChildAdded.listen((Event event) {
+    _jobAdded = _jobsDb.orderByKey().onChildAdded.listen((Event event) {
       JobData job = new JobData.fromDb(event.snapshot.key, event.snapshot.value);
       _dialogChildren.insert(
           _dialogChildren.length-1, // keep the last item the 'new' option.
@@ -119,11 +119,37 @@ class SettingsPageState extends State<SettingsPage> {
           )
       );
     });
+
+    _jobUpdated = _jobsDb.orderByKey().onChildChanged.listen((Event event) {
+      var index = _dialogChildren.indexOf(
+        _dialogChildren.firstWhere((Widget element) =>
+          (element is _SalaryUpdateDialogOption) &&
+          (element as _SalaryUpdateDialogOption).job.uid == event.snapshot.key
+        )
+      );
+      _dialogChildren.removeAt(index);
+      _dialogChildren.insert(index,
+        new _SalaryUpdateDialogOption(
+          job: new JobData.fromDb(event.snapshot.key, event.snapshot.value),
+          onUpdate: _updateJob,
+          onDelete: _deleteJob,
+        )
+      );
+    });
+
+    _jobRemoved = _jobsDb.orderByKey().onChildRemoved.listen((Event event) {
+      _dialogChildren.removeWhere((Widget element) =>
+        (element is _SalaryUpdateDialogOption) &&
+        (element as _SalaryUpdateDialogOption).job.uid == event.snapshot.key
+      );
+    });
   }
 
   @override
   void dispose() {
-    _jobsSubscription.cancel();
+    _jobAdded.cancel();
+    _jobUpdated.cancel();
+    _jobRemoved.cancel();
     super.dispose();
   }
 
@@ -138,16 +164,14 @@ class SettingsPageState extends State<SettingsPage> {
   }
 
   void _addJob(JobData job) {
-    print('Add job ${job.toMap().toString()}');
     _jobsDb.push().set(job.toMap());
   }
 
   void _updateJob(JobData job) {
-    print('Update job ${job.toMap().toString()}');
+    _jobsDb.child(job.uid).update(job.toMap());
   }
 
   void _deleteJob(JobData job) {
-    print('Deleting ${job.uid}');
     Navigator.pop(context, null);
 
     final ThemeData theme = Theme.of(context);
@@ -173,10 +197,7 @@ class SettingsPageState extends State<SettingsPage> {
               Navigator.of(context)
               ..pop(); // pop the SalaryEditWidget
 
-              //TODO - Working on getting delete working
-//              _jobsDb.equalTo(job.uid).onChildAdded.listen((Event event) {
-//                event.snapshot.
-//              });
+              _jobsDb.child(job.uid).remove();
             }
           )
         ]
